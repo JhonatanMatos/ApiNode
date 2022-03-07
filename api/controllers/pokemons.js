@@ -31,17 +31,33 @@ module.exports = app => {
 
     //Funcionando
     controller.listpokemons = (req, res) => {
-        res.status(200).json(pokemonsDB.pokemons.data)
+        let arraySort = pokemonsMock.data.sort(function (a, b) {
+            if (a.id > b.id) return 1;
+            if (a.id < b.id) return -1;
+            return 0;
+        })
+
+        res.status(200).json(arraySort)
     }
 
     //Funcionando
     controller.savepokemons = (req, res) => {
+        let aux = 1
+        let findPokemonId = false
+        let id = 0;
+        while (!findPokemonId) {
+            const foundLastPokemonId = pokemonsMock.data.find(e => e.id == aux)
+            findPokemonId = foundLastPokemonId ? false : true
+            id = aux
+            aux++
+        }
+
         pokemonsMock.data.push({
-            id: req.body.id,//uuidv4(),
+            id: id,//uuidv4(),
             title: req.body.title,
         });
 
-        res.status(201).json(pokemonsMock);
+        res.status(201).json(pokemonsMock);        
     };
 
     //Funcionando
@@ -84,7 +100,7 @@ module.exports = app => {
             });
         } else {
             const newPokemon = {
-                id: req.body.id,//uuidv4(),
+                id: req.params.pokemonId,//uuidv4(),
                 title: req.body.title,
             };
 
@@ -97,7 +113,7 @@ module.exports = app => {
             });
         }
     }
-    
+
     //Funcionando
     controller.removeAllpokemons = (req, res) => {
         pokemonsMock.data = []
